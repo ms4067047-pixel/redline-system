@@ -101,44 +101,41 @@
     const contentArea = document.getElementById('content-area');
     const sideMenu = document.getElementById('side-menu');
 
-    // --- RENDER ALL 15 PAGES ---
     pageNames.forEach((name, i) => {
         const div = document.createElement('div');
         div.id = `page-${i}`;
         div.className = `page ${i === 0 ? 'active' : ''}`;
 
-        // Page Logic Injection
-        if (i === 0) { // HOME
-            div.innerHTML = `<h1>☠️ Red Line OS</h1><p>Legendary Monolith v3.0</p><div class="stat-card"><h3>System Performance</h3><p>Memory: 55.4MB | CPU: Optimized | Threads: Wave-Sync</p></div>`;
-        } else if (i === 3) { // CINEMA
-            div.innerHTML = `<h1>🎬 Cinema Mode</h1><div id="video-engine">Search an anime to inject video stream.</div>`;
-        } else if (i === 5) { // LOCAL SEARCH
-            div.innerHTML = `<h1>🔍 Local DB</h1><input type="text" id="char-input" placeholder="Luffy..."><button onclick="searchCharacter()">SCAN</button><div id="search-result"></div>`;
-        } else if (i === 6) { // PHOTONIC SIM
-            div.innerHTML = `<h1>💡 Photonic Logic Sim</h1><p>Calculating Light-Based Logic Gates...</p><div style="background:#000; height:100px; border:1px solid var(--led); display:flex; align-items:center; justify-content:center;">SIGNAL: STABLE (1.002 THz)</div>`;
-        } else if (i === 8) { // MAL SEARCH
-            div.innerHTML = `<h1>🌐 MAL Global Grid</h1><div id="mal-results" class="anime-grid"></div>`;
-        } else if (i === 9) { // LOGS
-            div.innerHTML = `<h1>💾 Kernel Logs</h1><div id="log-container" style="font-family:monospace; color:#8b949e;"></div>`;
-        } else if (i === 12) { // ONE PIECE DB
-            div.innerHTML = `<h1>🍖 Straw Hat Database</h1><p>Luffy, Zoro, Nami, Usopp, Sanji, Chopper, Robin, Franky, Brook, Jinbe.</p>`;
-        } else if (i === 14) { // STATUS
-            div.innerHTML = `<h1>⚡ System Status</h1><div class="stat-card">Logic Cycles: <span id="cycles">0</span></div><div class="stat-card">Wave Frequency: 60Hz</div>`;
+        if (i === 0) { 
+            div.innerHTML = `<h1>☠️ Red Line OS</h1><div class="stat-card"><h3>Kernel: v3.0 Legendary</h3><p>Architecture: Monolithic SPA</p><p>Memory Footprint: 55.4MB</p></div><p>Welcome, Engineer. Use the Sidebar or Compiler to navigate.</p>`;
+        } else if (i === 3) { 
+            div.innerHTML = `<h1>🎬 Cinema Mode</h1><div id="video-engine" style="text-align:center; padding:50px; border:2px dashed var(--accent); border-radius:15px;">WAITING FOR MEDIA SIGNAL...</div>`;
+        } else if (i === 5) { 
+            div.innerHTML = `<h1>🔍 Character Search</h1><input type="text" id="char-input" style="background:#000; color:#0f0; border:1px solid var(--accent); padding:10px; border-radius:5px;"><button onclick="searchCharacter()" style="background:var(--accent); border:none; color:#fff; padding:10px; margin-left:10px; cursor:pointer;">SCAN</button><div id="search-result" style="margin-top:20px;"></div>`;
+        } else if (i === 8) { 
+            div.innerHTML = `<h1>🌐 MAL Global Search</h1><div id="mal-results" class="anime-grid"></div>`;
+        } else if (i === 9) { 
+            div.innerHTML = `<h1>💾 Kernel Logs</h1><div id="log-container" style="font-family:monospace; color:#0f0; background:#000; padding:15px; border-radius:5px; height:300px; overflow-y:auto;"></div>`;
+        } else if (i === 12) { 
+            div.innerHTML = `<h1>🍖 Straw Hat DB</h1><div class="anime-grid">
+                <div class="stat-card"><b>Luffy</b><br>Captain</div>
+                <div class="stat-card"><b>Zoro</b><br>Swordsman</div>
+                <div class="stat-card"><b>Nami</b><br>Navigator</div>
+            </div>`;
+        } else if (i === 13) { 
+            div.innerHTML = `<h1>📖 Logic Manual</h1><p><b>Wave Logic:</b> Uses Sinusoidal oscillators for UI sync.</p><p><b>Macro-Compiler:</b> Maps string tokens to JS executable functions.</p>`;
+        } else if (i === 14) { 
+            div.innerHTML = `<h1>⚡ System Status</h1><div class="stat-card">LOGIC CYCLES: <span id="cycles">0</span></div><div class="stat-card">UPTIME: <span id="uptime">0</span>s</div>`;
         } else {
-            div.innerHTML = `<h1>${name}</h1><p>Module Online. Waiting for Data.</p>`;
+            div.innerHTML = `<h1>${name}</h1><p>Module active. Awaiting data stream.</p>`;
         }
 
         contentArea.appendChild(div);
-
-        // Sidebar Button (The Bridge)
         const btn = document.createElement('button');
         btn.className = `side-btn ${i===0?'active':''}`;
         btn.id = `side-${i}`;
         btn.innerHTML = `<span style="width:20px; opacity:0.5;">${i+1}</span> ${name}`;
-        btn.onclick = () => {
-            document.getElementById('cmd-input').value = `GOTO ${i+1}`;
-            processCommand();
-        };
+        btn.onclick = () => { document.getElementById('cmd-input').value = `GOTO ${i+1}`; processCommand(); };
         sideMenu.appendChild(btn);
     });
 
@@ -153,41 +150,68 @@
 
     async function globalAnimeSearch(query) {
         const container = document.getElementById('mal-results');
-        container.innerHTML = "📡 QUERYING GLOBAL NODE...";
+        container.innerHTML = "<div style='color:var(--led)'>📡 SCANNING GLOBAL NODES...</div>";
         try {
             const res = await fetch(`https://api.jikan.moe/v4/anime?q=${query}&limit=6`);
             const json = await res.json();
             container.innerHTML = "";
+            
             json.data.forEach(a => {
-                container.innerHTML += `<div class="anime-card"><img src="${a.images.jpg.image_url}" onclick="playTrailer('${a.title}')"><h4>${a.title}</h4></div>`;
+                // We create a card that passes the Title to our new Player
+                container.innerHTML += `
+                    <div class="anime-card" onclick="playTrailer('${a.title.replace(/'/g, "")}')">
+                        <img src="${a.images.jpg.image_url}">
+                        <div style="padding:10px;">
+                            <b style="font-size:0.8rem;">${a.title}</b>
+                            <div style="color:var(--accent); font-size:0.7rem;">CLICK TO VIEW</div>
+                        </div>
+                    </div>`;
             });
-        } catch(e) { addLog("API FAIL"); }
+            addLog(`GRID_RENDER: ${json.data.length} OBJECTS`);
+        } catch(e) { 
+            addLog("CONNECTION_ERR: API TIMEOUT");
+        }
     }
 
     function playTrailer(title) {
-        addLog(`STREAM_INIT -> ${title.toUpperCase()}`);
-        switchPage(3); // Jump to Cinema Mode
+        addLog(`INJECTING MEDIA: ${title.toUpperCase()}`);
+        switchPage(3); // Go to Cinema Mode
         
-        // Use the proper YouTube Search Embed format
-        const searchUrl = `https://www.youtube.com/embed?autoplay=1&rel=0&listType=search&list=${encodeURIComponent(title + " official trailer")}`;
+        // --- THE "GOD-MODE" ID RESOLVER ---
+        // These specific IDs are allowed to be embedded anywhere
+        let videoId = "S8_YwFLCh4U"; // Default: One Piece (Netflix)
         
-        const videoContainer = document.getElementById('page-3');
-        videoContainer.innerHTML = `
-            <h1 style="color:var(--accent); margin-bottom:20px;">🎬 Cinema Mode: ${title}</h1>
-            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; border:2px solid var(--accent); box-shadow: 0 0 30px rgba(88, 166, 255, 0.3);">
+        if (title.toUpperCase().includes("NARUTO")) videoId = "S-7T_Ym70qM"; // Naruto Shippuden
+        if (title.toUpperCase().includes("SOLO LEVELING")) videoId = "9FqOof70F7o";
+        if (title.toUpperCase().includes("DEMON SLAYER")) videoId = "2gvuxG_6u7g";
+        if (title.toUpperCase().includes("ONE PIECE FILM RED")) videoId = "89J01_I_P7o";
+
+        const videoEngine = document.getElementById('page-3');
+        
+        videoEngine.innerHTML = `
+            <h1 style="color:var(--accent);">🎬 Cinema Mode: ${title}</h1>
+            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; border:2px solid var(--accent); box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);">
                 <iframe 
                     style="position:absolute; top:0; left:0; width:100%; height:100%;" 
-                    src="${searchUrl}" 
+                    src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0" 
                     frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allow="autoplay; encrypted-media" 
                     allowfullscreen>
                 </iframe>
             </div>
-            <div style="margin-top:20px; padding:15px; background:var(--card); border-radius:8px; border-left:4px solid var(--led);">
-                <p style="margin:0; font-size:0.9rem;"><b>WAVE STATUS:</b> RECEIVING DATA STREAM</p>
-                <p style="margin:5px 0 0 0; font-size:0.8rem; opacity:0.6;">Protocol: YouTube Data API v3 (Emulated)</p>
+            <div class="stat-card" style="margin-top:20px; border-left: 4px solid var(--led);">
+                <p><b>STREAM STATUS:</b> SECURE (Bypassing Restriction)</p>
+                <p><b>PROTOCOL:</b> YouTube No-Cookie Embed Mode</p>
             </div>
         `;
+    }
+
+    function searchCharacter() {
+        const name = document.getElementById('char-input').value.toLowerCase();
+        const res = document.getElementById('search-result');
+        const db = {"luffy":"Monkey D. Luffy - Gomu Gomu no Mi", "zoro":"Roronoa Zoro - 3 Sword Style"};
+        res.innerHTML = db[name] ? `<div class="stat-card">${db[name]}</div>` : "NOT IN LOCAL DB";
+        addLog(`DB SCAN: ${name.toUpperCase()}`);
     }
 
     function processCommand() {
@@ -203,20 +227,20 @@
 
     function addLog(msg) {
         logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
-        const container = document.getElementById('log-container');
-        if(container) container.innerHTML = logs.join('<br>');
+        const logBox = document.getElementById('log-container');
+        if(logBox) logBox.innerHTML = logs.join('<br>');
     }
 
     let pulse = 0;
+    let start = Date.now();
     function waveEngine() {
         pulse += 0.04;
         document.getElementById('wave-status').style.opacity = (Math.sin(pulse) * 0.4) + 0.6;
         if(document.getElementById('cycles')) document.getElementById('cycles').innerText = Math.floor(pulse * 100);
+        if(document.getElementById('uptime')) document.getElementById('uptime').innerText = Math.floor((Date.now() - start)/1000);
         requestAnimationFrame(waveEngine);
     }
     waveEngine();
-
-    document.getElementById('cmd-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') processCommand(); });
 </script>
 </body>
 </html>
