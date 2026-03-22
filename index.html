@@ -174,34 +174,43 @@
     }
 
     function playTrailer(title) {
-        addLog(`INJECTING MEDIA: ${title.toUpperCase()}`);
-        switchPage(3); // Go to Cinema Mode
+        addLog(`STAGING MEDIA: ${title.toUpperCase()}`);
+        switchPage(3); // Cinema Mode
         
-        // --- THE "GOD-MODE" ID RESOLVER ---
-        // These specific IDs are allowed to be embedded anywhere
+        // --- THE ID FINGERPRINT RESOLVER ---
+        // We use IDs that are explicitly marked as "Public Embed Allowed"
         let videoId = "S8_YwFLCh4U"; // Default: One Piece (Netflix)
         
-        if (title.toUpperCase().includes("NARUTO")) videoId = "S-7T_Ym70qM"; // Naruto Shippuden
-        if (title.toUpperCase().includes("SOLO LEVELING")) videoId = "9FqOof70F7o";
-        if (title.toUpperCase().includes("DEMON SLAYER")) videoId = "2gvuxG_6u7g";
-        if (title.toUpperCase().includes("ONE PIECE FILM RED")) videoId = "89J01_I_P7o";
+        const lowerTitle = title.toLowerCase();
+        if (lowerTitle.includes("naruto")) videoId = "S-7T_Ym70qM";
+        if (lowerTitle.includes("solo leveling")) videoId = "9FqOof70F7o";
+        if (lowerTitle.includes("demon slayer")) videoId = "2gvuxG_6u7g";
+        if (lowerTitle.includes("red")) videoId = "89J01_I_P7o";
 
         const videoEngine = document.getElementById('page-3');
         
+        // We use the 'nocookie' domain - it is the industry standard for high-security sites
+        const finalUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+
         videoEngine.innerHTML = `
-            <h1 style="color:var(--accent);">🎬 Cinema Mode: ${title}</h1>
+            <h1 style="color:var(--accent); margin-bottom:15px;">🎬 Cinema Mode: ${title}</h1>
             <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:15px; border:2px solid var(--accent); box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);">
                 <iframe 
                     style="position:absolute; top:0; left:0; width:100%; height:100%;" 
-                    src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0" 
+                    src="${finalUrl}" 
                     frameborder="0" 
-                    allow="autoplay; encrypted-media" 
+                    allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen>
                 </iframe>
             </div>
-            <div class="stat-card" style="margin-top:20px; border-left: 4px solid var(--led);">
-                <p><b>STREAM STATUS:</b> SECURE (Bypassing Restriction)</p>
-                <p><b>PROTOCOL:</b> YouTube No-Cookie Embed Mode</p>
+            <div style="margin-top:20px; display:flex; gap:15px;">
+                <div class="stat-card" style="flex:1; border-left:4px solid var(--led); margin-bottom:0;">
+                    <p style="margin:0;"><b>STREAM STATUS:</b> DIRECT_ID_INJECTION</p>
+                    <p style="margin:5px 0 0 0; font-size:0.8rem; opacity:0.6;">Node: ${videoId}</p>
+                </div>
+                <button onclick="window.open('https://youtu.be/${videoId}')" style="background:#ff0000; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">
+                    EXTERNAL PLAY ↗
+                </button>
             </div>
         `;
     }
